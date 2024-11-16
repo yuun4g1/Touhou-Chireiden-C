@@ -1,0 +1,504 @@
+#pragma warning(disable:4996)
+#pragma comment(lib,"Winmm.lib")
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+#define len 20
+#define bspeed1 5
+#define width 900
+#define high1 960
+
+IMAGE menu;
+IMAGE bk;
+IMAGE reimu;
+IMAGE reimu_mask;
+IMAGE bullet_reimu;
+IMAGE bullet_reimu_mask;
+IMAGE enemy_br;
+IMAGE enemy_br_mask;
+IMAGE enemy_rl;
+IMAGE enemy_rl_mask;
+IMAGE enemydead;
+IMAGE enemydead_mask;
+IMAGE enemybullet;
+IMAGE enemybullet_mask;
+IMAGE window;
+IMAGE window_mask;
+IMAGE start0;
+IMAGE start0_mask;
+IMAGE start1;
+IMAGE start1_mask;
+IMAGE option0;
+IMAGE option0_mask;
+IMAGE option1;
+IMAGE option1_mask;
+IMAGE quit0;
+IMAGE quit0_mask;
+IMAGE quit1;
+IMAGE quit1_mask;
+IMAGE bgmvolume0;
+IMAGE bgmvolume0_mask;
+IMAGE bgmvolume1;
+IMAGE bgmvolume1_mask;
+IMAGE pencent0;
+IMAGE pencent0_mask;
+IMAGE pencent1;
+IMAGE pencent1_mask;
+IMAGE zero0;
+IMAGE zero0_mask;
+IMAGE zero1;
+IMAGE zero1_mask;
+IMAGE one0;
+IMAGE one0_mask;
+IMAGE one1;
+IMAGE one1_mask;
+IMAGE two0;
+IMAGE two0_mask;
+IMAGE two1;
+IMAGE two1_mask;
+IMAGE three0;
+IMAGE three0_mask;
+IMAGE three1;
+IMAGE three1_mask;
+IMAGE four0;
+IMAGE four0_mask;
+IMAGE four1;
+IMAGE four1_mask;
+IMAGE five0;
+IMAGE five0_mask;
+IMAGE five1;
+IMAGE five1_mask;
+IMAGE six0;
+IMAGE six0_mask;
+IMAGE six1;
+IMAGE six1_mask;
+IMAGE seven0;
+IMAGE seven0_mask;
+IMAGE seven1;
+IMAGE seven1_mask;
+IMAGE eight0;
+IMAGE eight0_mask;
+IMAGE eight1;
+IMAGE eight1_mask;
+IMAGE nine0;
+IMAGE nine0_mask;
+IMAGE nine1;
+IMAGE nine1_mask;
+IMAGE yamame;
+IMAGE yamame_mask;
+IMAGE front;
+IMAGE front_mask;
+IMAGE star;
+IMAGE star_mask;
+IMAGE dummy;
+IMAGE dummy_mask;
+char res[260];
+int shifton = 0;
+int volume = 0;
+int time;
+int player=3;
+int power=3;
+int enemy01_x[5] = { 0,-100,-200,-300,-400 };
+int enemy01_y[5] = { 80,80,80,80,80 };
+int position_x,position_y;
+int boss_x, boss_y;
+int bulletjudge = 0;
+int speed = 2;
+int* bullet1_x = (int*)malloc(10 * sizeof(int));
+int* bullet1_y = (int*)malloc(10 * sizeof(int));
+int* bullet2_x = (int*)malloc(10 * sizeof(int));
+int* bullet2_y = (int*)malloc(10 * sizeof(int));
+struct bullet1 {
+	float x1 = -1;
+	float y1 = -1;
+	float vx1 = 6;
+	float vy1 = 0;
+};
+struct bullet1 b1[10000];
+double angle1 = 0;
+
+void startup()
+{
+	int i;
+	initgraph(1280, 960);
+	loadimage(&menu, "C:\\Users\\Yuki\\Desktop\\Game\\image\\menu.png");
+	loadimage(&reimu, "C:\\Users\\Yuki\\Desktop\\Game\\image\\reimu.bmp");
+	loadimage(&reimu_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\reimu_mask.bmp");
+	loadimage(&bk, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bk.png");
+	loadimage(&bullet_reimu, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bullet_reimu.bmp");
+	loadimage(&bullet_reimu_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bullet_reimu_mask.bmp");
+	loadimage(&enemy_br, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemy_br.bmp");
+	loadimage(&enemy_br_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemy_br_mask.bmp");
+	loadimage(&enemy_rl, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemy_rl.bmp");
+	loadimage(&enemy_rl_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemy_rl_mask.bmp");
+	loadimage(&enemydead, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemydead.bmp");
+	loadimage(&enemydead_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemydead_mask.bmp");
+	loadimage(&enemybullet, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemybullet.bmp");
+	loadimage(&enemybullet_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\enemybullet_mask.bmp");
+	loadimage(&window, "C:\\Users\\Yuki\\Desktop\\Game\\image\\window.bmp");
+	loadimage(&window_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\window_mask.bmp");
+	loadimage(&start0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\start0.bmp");
+	loadimage(&start0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\start0_mask.bmp");
+	loadimage(&start1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\start1.bmp");
+	loadimage(&start1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\start1_mask.bmp");
+	loadimage(&option0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\option0.bmp");
+	loadimage(&option0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\option0_mask.bmp");
+	loadimage(&option1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\option1.bmp");
+	loadimage(&option1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\option1_mask.bmp");
+	loadimage(&quit0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\quit0.bmp");
+	loadimage(&quit0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\quit0_mask.bmp");
+	loadimage(&quit1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\quit1.bmp");
+	loadimage(&quit1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\quit1_mask.bmp");
+	loadimage(&bgmvolume0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bgmvolume0.bmp");
+	loadimage(&bgmvolume0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bgmvolume0_mask.bmp");
+	loadimage(&bgmvolume1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bgmvolume1.bmp");
+	loadimage(&bgmvolume1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\bgmvolume1_mask.bmp");
+	loadimage(&pencent0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\pencent0.bmp");
+	loadimage(&pencent0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\pencent0_mask.bmp");
+	loadimage(&pencent1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\pencent1.bmp");
+	loadimage(&pencent1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\pencent1_mask.bmp");
+	loadimage(&zero0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\00.bmp");
+	loadimage(&zero0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\00_mask.bmp");
+	loadimage(&zero1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\01.bmp");
+	loadimage(&zero1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\01_mask.bmp");
+	loadimage(&one0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\10.bmp");
+	loadimage(&one0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\10_mask.bmp");
+	loadimage(&one1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\11.bmp");
+	loadimage(&one1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\11_mask.bmp");
+	loadimage(&two0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\20.bmp");
+	loadimage(&two0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\20_mask.bmp");
+	loadimage(&two1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\21.bmp");
+	loadimage(&two1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\21_mask.bmp");
+	loadimage(&three0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\30.bmp");
+	loadimage(&three0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\30_mask.bmp");
+	loadimage(&three1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\31.bmp");
+	loadimage(&three1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\31_mask.bmp");
+	loadimage(&four0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\40.bmp");
+	loadimage(&four0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\40_mask.bmp");
+	loadimage(&four1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\41.bmp");
+	loadimage(&four1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\41_mask.bmp");
+	loadimage(&five0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\50.bmp");
+	loadimage(&five0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\50_mask.bmp");
+	loadimage(&five1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\51.bmp");
+	loadimage(&five1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\51_mask.bmp");
+	loadimage(&six0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\60.bmp");
+	loadimage(&six0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\60_mask.bmp");
+	loadimage(&six1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\61.bmp");
+	loadimage(&six1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\61_mask.bmp");
+	loadimage(&seven0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\70.bmp");
+	loadimage(&seven0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\70_mask.bmp");
+	loadimage(&seven1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\71.bmp");
+	loadimage(&seven1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\71_mask.bmp");
+	loadimage(&eight0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\80.bmp");
+	loadimage(&eight0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\80_mask.bmp");
+	loadimage(&eight1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\81.bmp");
+	loadimage(&eight1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\81_mask.bmp");
+	loadimage(&nine0, "C:\\Users\\Yuki\\Desktop\\Game\\image\\90.bmp");
+	loadimage(&nine0_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\90_mask.bmp");
+	loadimage(&nine1, "C:\\Users\\Yuki\\Desktop\\Game\\image\\91.bmp");
+	loadimage(&nine1_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\91_mask.bmp");
+	loadimage(&yamame, "C:\\Users\\Yuki\\Desktop\\Game\\image\\yamame.bmp");
+	loadimage(&yamame_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\yamame_mask.bmp");
+	loadimage(&front, "C:\\Users\\Yuki\\Desktop\\Game\\image\\front.bmp");
+	loadimage(&front_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\front_mask.bmp");
+	loadimage(&star, "C:\\Users\\Yuki\\Desktop\\Game\\image\\star.bmp");
+	loadimage(&star_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\star_mask.bmp");
+	loadimage(&dummy, "C:\\Users\\Yuki\\Desktop\\Game\\image\\dummy.bmp");
+	loadimage(&dummy_mask, "C:\\Users\\Yuki\\Desktop\\Game\\image\\dummy_mask.bmp");
+	position_x = 420;
+	position_y = 800;
+	boss_x = 420;
+	boss_y = 300;
+	for (i = 0;i < 15;i++) {
+		bullet1_x[i] = 1000;
+		bullet1_y[i] = -100;
+		bullet2_x[i] = 1000;
+		bullet2_y[i] = -100;
+	}
+}
+
+void showmenu()
+{
+	mciSendString("open C:\\Users\\Yuki\\Desktop\\Game\\sound\\地霊達の起床.mp3 alias 01", NULL, 0, NULL);
+	mciSendString("play 01 repeat", NULL, 0, NULL);
+	putimage(0, 0, &menu);
+	putimage(960, 680, &start0_mask, SRCAND);
+	putimage(960, 680, &start0, SRCPAINT);
+	putimage(960, 780, &option1_mask, SRCAND);
+	putimage(960, 780, &option1, SRCPAINT);
+	putimage(960, 880, &quit1_mask, SRCAND);
+	putimage(960, 880, &quit1, SRCPAINT);
+	char ch;
+	int type = 0;
+	while (1) {
+		if (kbhit()) {
+			ch = getch();
+			if (ch == 'k'&&type<2) {
+				type++;
+			}
+			else if (ch == 'i' && type > 0&&type<3) {
+				type--;
+			}
+			if (ch == 13) {
+				if (type == 0) {
+					return;
+				}
+				else if (type == 1) {
+					type = 3;
+				}
+				else if (type == 2) {
+					exit(0);
+				}
+			}
+			switch (type)
+			{
+			case 0:
+				putimage(960, 680, &start0_mask, SRCAND);
+				putimage(960, 680, &start0, SRCPAINT);
+				putimage(960, 780, &option1_mask, SRCAND);
+				putimage(960, 780, &option1, SRCPAINT);
+				putimage(960, 880, &quit1_mask, SRCAND);
+				putimage(960, 880, &quit1, SRCPAINT);
+				break;
+
+			case 1:
+				putimage(960, 680, &start1_mask, SRCAND);
+				putimage(960, 680, &start1, SRCPAINT);
+				putimage(960, 780, &option0_mask, SRCAND);
+				putimage(960, 780, &option0, SRCPAINT);
+				putimage(960, 880, &quit1_mask, SRCAND);
+				putimage(960, 880, &quit1, SRCPAINT);
+				break;
+
+			case 2:
+				putimage(960, 680, &start1_mask, SRCAND);
+				putimage(960, 680, &start1, SRCPAINT);
+				putimage(960, 780, &option1_mask, SRCAND);
+				putimage(960, 780, &option1, SRCPAINT);
+				putimage(960, 880, &quit0_mask, SRCAND);
+				putimage(960, 880, &quit0, SRCPAINT);
+				break;
+
+			case 3:
+				putimage(0, 0, &menu);
+				putimage(850, 680, &bgmvolume0_mask, SRCAND);
+				putimage(850, 680, &bgmvolume0, SRCPAINT);
+				break;
+			}
+		}
+		
+	}
+}
+
+void show()
+{
+	static int i=0;
+	int j,t;
+	putimage(64, 0, 768, 960, &bk, 128, 1024 - i);
+	if (i <= 1024) { i = i + 4; }
+	else i = i - 1024 + 4;
+	putimage(position_x, position_y, &reimu_mask, SRCAND);
+	putimage(position_x, position_y, &reimu, SRCPAINT);
+	if (shifton) {
+		putimage(position_x + 28, position_y + 42, &dummy_mask, SRCAND);
+		putimage(position_x + 28, position_y + 42, &dummy, SRCPAINT);
+	}
+	for(j = 0;j < 5;j++) {
+		if (enemy01_y[j] < 1000) {
+			putimage(enemy01_x[j], enemy01_y[j], &enemy_br_mask, SRCAND);
+			putimage(enemy01_x[j], enemy01_y[j], &enemy_br, SRCPAINT);
+		}
+	}
+	for (j = 0;j < 15;j++) {
+		if (bullet1_y[j] > -100) {
+			putimage(bullet1_x[j], bullet1_y[j], &bullet_reimu_mask, SRCAND);
+			putimage(bullet1_x[j], bullet1_y[j], &bullet_reimu, SRCPAINT);
+			putimage(bullet2_x[j], bullet2_y[j], &bullet_reimu_mask, SRCAND);
+			putimage(bullet2_x[j], bullet2_y[j], &bullet_reimu, SRCPAINT);
+		}
+	}
+	for ( t = 0; b1[t].vx1 != 6; t++) {
+		if (b1[t].x1 > 0 && b1[t].x1 < high1 && b1[t].y1>0 && b1[t].y1 < width) {//界内子弹才显示
+			//putimage(b1[t].x1, b1[t].y1, &enemybullet_mask, SRCAND);
+			//putimage(b1[t].x1, b1[t].y1, &enemybullet, SRCPAINT);
+			putimage(b1[t].x1, b1[t].y1, &enemybullet_mask, SRCAND);
+			putimage(b1[t].x1, b1[t].y1, &enemybullet, SRCPAINT);
+		}
+	}
+	putimage(0, 0, &window_mask, SRCAND);
+	putimage(0, 0, &window, SRCPAINT);
+	//putimage(860, 200, &front_mask, SRCAND);
+	//putimage(860, 200, &front, SRCPAINT);
+	for (j = 0;j < player;j++) {
+		putimage(900 + j * 36, 200, &star_mask, SRCAND);
+		putimage(900 + j * 36, 200, &star, SRCPAINT);
+	}
+	FlushBatchDraw();
+}
+
+void bullet(int judge)
+{
+	static int i = 0, time = 0 ;
+	int j;
+	if (judge == 1) {
+		time++;
+		if (time > 24) {
+			bullet1_x[i] = position_x;
+			bullet1_y[i] = position_y - 40;
+			bullet2_x[i] = position_x + 36;
+			bullet2_y[i] = position_y - 40;
+			i++;
+			time = 0;
+		}
+		
+		for (j = 0;j < i;j++) {
+			bullet1_y[j] -= 5;
+			bullet2_y[j] -= 5;
+		}
+		for (j = i + 1;j < 10;j++) {
+			bullet1_y[j] -= 5;
+			bullet2_y[j] -= 5;
+		}
+		if (i == 9) {
+			i = 0;
+		}
+	}
+	else {
+		time++;
+		if (time > 24) {
+			bullet1_y[i] = -100;
+			bullet2_y[i] = -100;
+			i++;
+			time = 0;
+		}
+		
+		for (j = 0;j < i;j++) {
+			bullet1_y[j] -= 5;
+			bullet2_y[j] -= 5;
+		}
+		for (j = i + 1;j < 10;j++) {
+			bullet1_y[j] -= 5;
+			bullet2_y[j] -= 5;
+		}
+		if (i == 9) {
+			i = 0;
+		}
+	}
+}
+
+void updateWithoutInput()
+{
+	static int turn = 0, move_x = 0, move_y = 0, time = 0;
+	int i,j;
+	time++;
+	if (turn == 0) {
+		if (time > 1000) {
+			for (i = 0;i < 5;i++) {
+				if (move_x < 300) {
+					enemy01_x[i] += 2;
+				}
+				if (move_y < 250) {
+					enemy01_y[i]++;
+				}
+			}
+			move_x++;
+			move_y++;
+			if (time > 2000) {
+				for (i = 0;i < 5;i++) {
+					enemy01_x[i] += 2;
+					enemy01_y[i]++;
+				}
+			}
+			for (i = 0;i < 10;i++) {
+				for (j = 0;j < 5;j++) {
+					if (bullet1_x[i]<enemy01_x[j]+64&&bullet1_x[i]>enemy01_x[j]&&bullet1_y[i]<enemy01_y[j]+64&&bullet1_y[i]+32>enemy01_y[j]|| bullet2_x[i]<enemy01_x[j] + 64 && bullet2_x[i]>enemy01_x[j] && bullet2_y[i] < enemy01_y[j] + 64 && bullet2_y[i] + 32 > enemy01_y[j]) {
+						putimage(enemy01_x[j]-32, enemy01_y[j]-32, &enemydead_mask, SRCAND);
+						putimage(enemy01_x[j]-32, enemy01_y[j]-32, &enemydead, SRCPAINT);
+						FlushBatchDraw();
+						enemy01_x[j] = 1000;
+						enemy01_y[j] = 1000;
+						bullet1_y[i] = -100;
+						bullet2_y[i] = -100;
+					}
+				}
+			}
+		}
+	}
+}
+
+void updateWithInput()
+{
+	if (GetAsyncKeyState(VK_UP) & 0x8000 && position_y > 40) {
+		position_y -= speed;
+	}
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000 && position_y < 840) {
+		position_y += speed;
+	}
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000 && position_x > 70) {
+		position_x -= speed;
+	}
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && position_x < 770) {
+		position_x += speed;
+	}
+	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000) {
+		speed = 1;
+		shifton = 1;
+	}
+	else {
+		speed = 2;
+		shifton = 0;
+	}
+	if (GetAsyncKeyState('Z') & 0x8000) {
+		bullet(1);
+	}
+	else {
+		bullet(0);
+	}
+	
+}
+
+void boss()
+{
+	static int mark1 = 0;
+	if (mark1 < 10000) {
+		b1[mark1].x1 = boss_x + len * cos(angle1);
+		b1[mark1].y1 = boss_y + len * sin(angle1); //通过数学计算得到初始位置，注意三角函数用弧度
+		b1[mark1].vx1 = bspeed1 * cos(angle1);
+		b1[mark1].vy1 = bspeed1 * sin(angle1);      //通过数学计算得到初始速度
+		angle1 = angle1 + 2 * PI / 5;               //5等分一个圆
+		if (mark1 % 5 == 0&&mark1%400<200) {
+			angle1 += PI / 15;                      //每五发控制偏转一次
+		}
+		if (mark1 % 5 == 0&&mark1%400>=200) {
+			angle1 -= PI/ 15;
+		}
+		for (int t = 0; b1[t].vx1 != 6; t++) {
+				if (b1[t].x1 > 0 && b1[t].x1 < width && b1[t].y1>0 && b1[t].y1 < high1) {//界内子弹才显示
+					b1[t].x1 += b1[t].vx1;
+					b1[t].y1 += b1[t].vy1;
+				}
+		}
+		mark1++;
+	}
+}
+
+int main()
+{
+	startup();
+	showmenu();
+	mciSendString(("close 01"), NULL, 0, NULL);
+	mciSendString("open C:\\Users\\Yuki\\Desktop\\Game\\sound\\暗闇の風穴.mp3 alias 02", NULL, 0, NULL);
+	mciSendString("play 02 repeat", NULL, 0, NULL);
+	BeginBatchDraw();
+	while (1) {
+		show();
+		updateWithoutInput();
+		boss();
+		updateWithInput();
+
+	}
+}
